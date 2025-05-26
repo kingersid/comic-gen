@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Comic Strip Generator</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/supabase-js/2.39.0/umd/supabase.min.js"></script>
+    <title>T-Shirt Graphic Generator</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@1"></script>
 </head>
 <body>
     <div id="app">
-        <h1>Comic Strip Generator</h1>
+        <h1>🎨 T-Shirt Graphic Generator</h1>
         
         <!-- Configuration Section -->
         <div id="config-section">
@@ -30,64 +30,107 @@
 
         <!-- Main App Section -->
         <div id="main-app" style="display: none;">
-            <h2>Create Comic Strip</h2>
+            <h2>Create Your T-Shirt Design</h2>
             
-            <!-- Story Input -->
-            <div>
-                <label for="story-input">Story Description:</label>
-                <textarea id="story-input" rows="4" cols="50" 
-                    placeholder="Describe your comic story (e.g., 'A superhero saves the city from alien invasion')"></textarea>
+            <!-- Image Upload -->
+            <div class="upload-section">
+                <label for="source-image">Upload Source Image:</label>
+                <input type="file" id="source-image" accept="image/*" required>
+                <div id="source-preview" class="image-preview"></div>
             </div>
 
-            <!-- Comic Style -->
+            <!-- Design Prompt -->
             <div>
-                <label for="comic-style">Comic Style:</label>
-                <select id="comic-style">
-                    <option value="superhero">Superhero</option>
-                    <option value="manga">Manga</option>
-                    <option value="cartoon">Cartoon</option>
-                    <option value="realistic">Realistic</option>
-                    <option value="fantasy">Fantasy</option>
-                    <option value="scifi">Sci-Fi</option>
+                <label for="design-prompt">Design Description:</label>
+                <textarea id="design-prompt" rows="3" cols="50" 
+                    placeholder="Describe how you want to transform this image for a T-shirt (e.g., 'Make it a vintage band poster style with bold colors')"></textarea>
+            </div>
+
+            <!-- Style Options -->
+            <div>
+                <label for="graphic-style">Graphic Style:</label>
+                <select id="graphic-style">
+                    <option value="vintage">Vintage/Retro</option>
+                    <option value="minimalist">Minimalist</option>
+                    <option value="streetwear">Streetwear</option>
+                    <option value="artistic">Artistic/Watercolor</option>
+                    <option value="pop-art">Pop Art</option>
+                    <option value="grunge">Grunge</option>
+                    <option value="neon">Neon/Cyberpunk</option>
+                    <option value="hand-drawn">Hand-drawn</option>
                 </select>
             </div>
 
-            <!-- Panel Count -->
+            <!-- Size Format -->
             <div>
-                <label for="panel-count">Number of Panels:</label>
-                <select id="panel-count">
-                    <option value="3">3 Panels</option>
-                    <option value="4" selected>4 Panels</option>
-                    <option value="5">5 Panels</option>
-                    <option value="6">6 Panels</option>
+                <label for="design-format">Design Format:</label>
+                <select id="design-format">
+                    <option value="front-large">Front - Large Print</option>
+                    <option value="front-small">Front - Small/Pocket</option>
+                    <option value="back-large">Back - Large Print</option>
+                    <option value="front-back">Front & Back Combo</option>
+                    <option value="sleeve">Sleeve Design</option>
                 </select>
             </div>
 
-            <!-- Character Image Upload -->
+            <!-- Color Scheme -->
             <div>
-                <label for="character-image">Upload Character Image (optional):</label>
-                <input type="file" id="character-image" accept="image/*">
-                <img id="character-preview" style="max-width: 200px; display: none;">
+                <label for="color-scheme">Color Scheme:</label>
+                <select id="color-scheme">
+                    <option value="original">Keep Original Colors</option>
+                    <option value="monochrome">Black & White</option>
+                    <option value="sepia">Sepia/Vintage</option>
+                    <option value="vibrant">Vibrant/Saturated</option>
+                    <option value="pastel">Pastel Colors</option>
+                    <option value="neon">Neon Colors</option>
+                    <option value="earthy">Earthy Tones</option>
+                </select>
             </div>
 
-            <button onclick="generateComicStrip()" id="generate-btn">Generate Comic Strip</button>
+            <!-- T-shirt Color Preview -->
+            <div>
+                <label for="tshirt-color">T-Shirt Color Preview:</label>
+                <select id="tshirt-color">
+                    <option value="white">White</option>
+                    <option value="black">Black</option>
+                    <option value="gray">Gray</option>
+                    <option value="navy">Navy Blue</option>
+                    <option value="red">Red</option>
+                    <option value="green">Green</option>
+                </select>
+            </div>
+
+            <button onclick="generateTShirtGraphic()" id="generate-btn">🎯 Generate T-Shirt Design</button>
 
             <!-- Progress -->
             <div id="progress" style="display: none;">
                 <div>Progress: <span id="progress-text">0%</span></div>
-                <div id="progress-bar" style="width: 100%; background: #f0f0f0; height: 20px;">
-                    <div id="progress-fill" style="width: 0%; background: #4CAF50; height: 100%;"></div>
+                <div id="progress-bar" style="width: 100%; background: #f0f0f0; height: 20px; border-radius: 10px;">
+                    <div id="progress-fill" style="width: 0%; background: linear-gradient(90deg, #FF6B6B, #4ECDC4); height: 100%; border-radius: 10px; transition: width 0.3s ease;"></div>
                 </div>
                 <div id="status-text">Initializing...</div>
             </div>
 
-            <!-- Comic Output -->
-            <div id="comic-output" style="display: none;">
-                <h3>Your Comic Strip</h3>
-                <div id="comic-panels"></div>
-                <button onclick="downloadComicStrip()">Download Comic Strip</button>
-                <button onclick="regeneratePanel()">Regenerate Random Panel</button>
-                <button onclick="saveComicStrip()">Save to Database</button>
+            <!-- Design Output -->
+            <div id="design-output" style="display: none;">
+                <h3>Your T-Shirt Design</h3>
+                <div id="design-preview" class="design-container">
+                    <div id="tshirt-mockup" class="tshirt-preview">
+                        <div id="design-placement" class="design-area"></div>
+                    </div>
+                </div>
+                <div class="action-buttons">
+                    <button onclick="downloadDesign()">💾 Download Design</button>
+                    <button onclick="regenerateDesign()">🔄 Regenerate</button>
+                    <button onclick="adjustDesign()">⚙️ Adjust Style</button>
+                    <button onclick="saveDesign()">💼 Save to Collection</button>
+                </div>
+                
+                <!-- Design Variations -->
+                <div id="variations" class="variations-section">
+                    <h4>Design Variations</h4>
+                    <div id="variation-grid" class="variation-grid"></div>
+                </div>
             </div>
         </div>
     </div>
@@ -95,8 +138,9 @@
     <script>
         let supabase;
         let hfApiKey;
-        let currentComic = null;
-        let characterImage = null;
+        let currentDesign = null;
+        let sourceImageData = null;
+        let generatedImages = [];
 
         // Initialize the application
         async function initializeApp() {
@@ -120,7 +164,7 @@
                 document.getElementById('config-section').style.display = 'none';
                 document.getElementById('main-app').style.display = 'block';
                 
-                alert('App initialized successfully!');
+                alert('App initialized successfully! 🎉');
                 
             } catch (error) {
                 alert('Failed to initialize app: ' + error.message);
@@ -130,181 +174,133 @@
         // Initialize database table
         async function initializeDatabase() {
             try {
-                const { data, error } = await supabase.from('comic_strips').select('count');
+                const { data, error } = await supabase.from('tshirt_designs').select('count');
                 if (error && error.code === 'PGRST116') {
-                    // Table doesn't exist, but we can't create it here
-                    console.log('comic_strips table not found, will need to be created manually');
+                    console.log('tshirt_designs table not found, will need to be created manually');
                 }
             } catch (error) {
                 console.log('Database check failed:', error);
             }
         }
 
-        // Handle character image upload
-        document.getElementById('character-image').addEventListener('change', function(e) {
+        // Handle source image upload
+        document.getElementById('source-image').addEventListener('change', function(e) {
             const file = e.target.files[0];
             if (file) {
                 const reader = new FileReader();
                 reader.onload = function(e) {
-                    characterImage = e.target.result;
-                    const preview = document.getElementById('character-preview');
-                    preview.src = characterImage;
-                    preview.style.display = 'block';
+                    sourceImageData = e.target.result;
+                    const preview = document.getElementById('source-preview');
+                    preview.innerHTML = `<img src="${sourceImageData}" alt="Source Image" style="max-width: 300px; max-height: 300px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">`;
                 };
                 reader.readAsDataURL(file);
             }
         });
 
-        // Generate comic strip
-        async function generateComicStrip() {
-            const story = document.getElementById('story-input').value;
-            const style = document.getElementById('comic-style').value;
-            const panelCount = parseInt(document.getElementById('panel-count').value);
+        // Generate T-shirt graphic
+        async function generateTShirtGraphic() {
+            const prompt = document.getElementById('design-prompt').value;
+            const style = document.getElementById('graphic-style').value;
+            const format = document.getElementById('design-format').value;
+            const colorScheme = document.getElementById('color-scheme').value;
 
-            if (!story.trim()) {
-                alert('Please enter a story description');
+            if (!sourceImageData) {
+                alert('Please upload a source image first');
                 return;
             }
 
             // Show progress
             document.getElementById('progress').style.display = 'block';
-            document.getElementById('comic-output').style.display = 'none';
+            document.getElementById('design-output').style.display = 'none';
             document.getElementById('generate-btn').disabled = true;
 
             try {
-                updateProgress(10, 'Breaking story into panels...');
+                updateProgress(10, 'Analyzing source image...');
                 
-                // Generate panel descriptions
-                const panelDescriptions = await generatePanelDescriptions(story, panelCount, style);
+                // Generate design prompt based on inputs
+                const fullPrompt = createDesignPrompt(prompt, style, format, colorScheme);
                 
-                updateProgress(20, 'Setting up comic panels...');
+                updateProgress(30, 'Creating main design...');
                 
-                // Create panel structure
-                createPanelStructure(panelDescriptions);
+                // Generate main design
+                const mainDesign = await generateDesignImage(fullPrompt);
                 
-                // Generate images for each panel
-                for (let i = 0; i < panelDescriptions.length; i++) {
-                    updateProgress(30 + (i * 50 / panelDescriptions.length), `Generating panel ${i + 1}...`);
-                    await generatePanelImage(i, panelDescriptions[i], style);
-                }
+                updateProgress(60, 'Creating design variations...');
                 
-                updateProgress(90, 'Finalizing comic strip...');
+                // Generate variations
+                const variations = await generateDesignVariations(fullPrompt, style);
                 
-                // Store comic data
-                currentComic = {
-                    story,
+                updateProgress(80, 'Setting up T-shirt preview...');
+                
+                // Create T-shirt preview
+                setupTShirtPreview(mainDesign, format);
+                
+                updateProgress(90, 'Finalizing design...');
+                
+                // Store design data
+                currentDesign = {
+                    prompt,
                     style,
-                    panelDescriptions,
-                    panelCount,
+                    format,
+                    colorScheme,
+                    mainDesign,
+                    variations,
                     createdAt: new Date().toISOString()
                 };
                 
-                updateProgress(100, 'Comic strip complete!');
+                updateProgress(100, 'T-shirt design complete! 🎨');
                 
                 // Show output
                 setTimeout(() => {
                     document.getElementById('progress').style.display = 'none';
-                    document.getElementById('comic-output').style.display = 'block';
+                    document.getElementById('design-output').style.display = 'block';
                     document.getElementById('generate-btn').disabled = false;
+                    displayVariations(variations);
                 }, 1000);
                 
             } catch (error) {
-                alert('Failed to generate comic strip: ' + error.message);
+                alert('Failed to generate T-shirt design: ' + error.message);
                 document.getElementById('progress').style.display = 'none';
                 document.getElementById('generate-btn').disabled = false;
             }
         }
 
-        // Generate panel descriptions from story
-        async function generatePanelDescriptions(story, panelCount, style) {
-            // This is a simple implementation - in production you'd use GPT or Claude API
-            const baseDescriptions = {
-                3: [
-                    "Opening scene establishing the setting and main character",
-                    "The main conflict or challenge is introduced",
-                    "Resolution and conclusion of the story"
-                ],
-                4: [
-                    "Opening scene with the main character in their normal environment",
-                    "The inciting incident that starts the adventure",
-                    "The main conflict or challenge reaches its peak",
-                    "Resolution and happy ending"
-                ],
-                5: [
-                    "Peaceful beginning showing the main character's daily life",
-                    "Something unusual happens that disrupts the peace",
-                    "The character faces the main challenge or villain",
-                    "Intense action scene or climax of the story",
-                    "Victory celebration and return to peace"
-                ],
-                6: [
-                    "Introduction of the main character in their world",
-                    "A problem or threat is discovered",
-                    "The character prepares for the challenge ahead",
-                    "First confrontation with the main obstacle",
-                    "The climactic battle or final challenge",
-                    "Triumphant resolution and new status quo"
-                ]
+        // Create design prompt from inputs
+        function createDesignPrompt(userPrompt, style, format, colorScheme) {
+            const stylePrompts = {
+                vintage: "vintage retro style with distressed textures and classic typography",
+                minimalist: "clean minimalist design with simple lines and negative space",
+                streetwear: "urban streetwear style with bold graphics and modern typography",
+                artistic: "artistic watercolor style with flowing colors and organic shapes",
+                "pop-art": "pop art style with bold colors, high contrast, and comic book elements",
+                grunge: "grunge aesthetic with rough textures, distressed elements, and alternative style",
+                neon: "cyberpunk neon style with glowing effects and futuristic elements",
+                "hand-drawn": "hand-drawn illustration style with sketchy lines and organic feel"
             };
 
-            const templates = baseDescriptions[panelCount];
-            const styleModifiers = {
-                superhero: "in dynamic superhero comic book style with bold action",
-                manga: "in Japanese manga style with dramatic expressions",
-                cartoon: "in colorful cartoon style with exaggerated features",
-                realistic: "in realistic comic book style with detailed art",
-                fantasy: "in fantasy art style with magical elements",
-                scifi: "in sci-fi style with futuristic technology"
+            const formatPrompts = {
+                "front-large": "large chest print design, centered placement",
+                "front-small": "small pocket-sized design for upper left chest",
+                "back-large": "large back print design covering upper back area",
+                "front-back": "coordinated front and back design elements",
+                sleeve: "sleeve placement design, vertical orientation"
             };
 
-            return templates.map((template, index) => {
-                return `Panel ${index + 1}: ${template}. ${story}. ${styleModifiers[style]}.`;
-            });
+            const colorPrompts = {
+                original: "",
+                monochrome: "black and white only, high contrast",
+                sepia: "sepia tones, vintage brown color palette",
+                vibrant: "highly saturated vibrant colors, eye-catching",
+                pastel: "soft pastel color palette, gentle tones",
+                neon: "bright neon colors, electric and glowing",
+                earthy: "earthy natural color palette, browns and greens"
+            };
+
+            return `T-shirt graphic design: ${userPrompt}. ${stylePrompts[style]}. ${formatPrompts[format]}. ${colorPrompts[colorScheme]}. High quality, print-ready, isolated on transparent background.`;
         }
 
-        // Create panel structure in DOM
-        function createPanelStructure(descriptions) {
-            const panelsContainer = document.getElementById('comic-panels');
-            panelsContainer.innerHTML = '';
-
-            descriptions.forEach((desc, index) => {
-                const panel = document.createElement('div');
-                panel.className = 'comic-panel';
-                panel.id = `panel-${index}`;
-                panel.innerHTML = `
-                    <h4>Panel ${index + 1}</h4>
-                    <div class="panel-content">
-                        <div class="loading">Generating...</div>
-                    </div>
-                    <p class="panel-description">${desc}</p>
-                `;
-                panelsContainer.appendChild(panel);
-            });
-        }
-
-        // Generate image for a specific panel
-        async function generatePanelImage(panelIndex, description, style) {
-            try {
-                // Use Hugging Face Inference API for image generation
-                const imageUrl = await callHuggingFaceImageAPI(description);
-                
-                // Update panel with generated image
-                const panel = document.getElementById(`panel-${panelIndex}`);
-                const content = panel.querySelector('.panel-content');
-                content.innerHTML = `<img src="${imageUrl}" alt="Panel ${panelIndex + 1}" style="max-width: 100%; height: auto;">`;
-                
-            } catch (error) {
-                console.error(`Failed to generate panel ${panelIndex}:`, error);
-                
-                // Show placeholder on error
-                const panel = document.getElementById(`panel-${panelIndex}`);
-                const content = panel.querySelector('.panel-content');
-                content.innerHTML = `<div class="error">Failed to generate image for panel ${panelIndex + 1}</div>`;
-            }
-        }
-
-        // Call Hugging Face API for image generation
-        async function callHuggingFaceImageAPI(prompt) {
+        // Generate design image using Hugging Face API
+        async function generateDesignImage(prompt) {
             const API_URL = "https://api-inference.huggingface.co/models/runwayml/stable-diffusion-v1-5";
             
             const response = await fetch(API_URL, {
@@ -316,9 +312,11 @@
                 body: JSON.stringify({
                     inputs: prompt,
                     parameters: {
-                        negative_prompt: "blurry, low quality, distorted",
-                        num_inference_steps: 20,
-                        guidance_scale: 7.5
+                        negative_prompt: "low quality, blurry, distorted, watermark, signature, frame, border",
+                        num_inference_steps: 25,
+                        guidance_scale: 8.0,
+                        width: 512,
+                        height: 512
                     }
                 }),
             });
@@ -331,6 +329,81 @@
             return URL.createObjectURL(blob);
         }
 
+        // Generate design variations
+        async function generateDesignVariations(basePrompt, style) {
+            const variations = [];
+            const variationStyles = ["bold and graphic", "soft and subtle", "high contrast"];
+            
+            for (let i = 0; i < 3; i++) {
+                try {
+                    const variantPrompt = `${basePrompt} ${variationStyles[i]} variation`;
+                    const variation = await generateDesignImage(variantPrompt);
+                    variations.push(variation);
+                } catch (error) {
+                    console.error(`Failed to generate variation ${i}:`, error);
+                }
+            }
+            
+            return variations;
+        }
+
+        // Setup T-shirt preview with design
+        function setupTShirtPreview(designUrl, format) {
+            const tshirtColor = document.getElementById('tshirt-color').value;
+            const designPlacement = document.getElementById('design-placement');
+            const tshirtMockup = document.getElementById('tshirt-mockup');
+            
+            // Set T-shirt background color
+            const colorMap = {
+                white: '#ffffff',
+                black: '#1a1a1a',
+                gray: '#808080',
+                navy: '#1e3a8a',
+                red: '#dc2626',
+                green: '#16a34a'
+            };
+            
+            tshirtMockup.style.backgroundColor = colorMap[tshirtColor];
+            tshirtMockup.style.border = tshirtColor === 'white' ? '2px solid #e5e5e5' : 'none';
+            
+            // Position design based on format
+            const formatStyles = {
+                "front-large": { width: '60%', height: '60%', top: '25%', left: '20%' },
+                "front-small": { width: '15%', height: '15%', top: '15%', left: '15%' },
+                "back-large": { width: '50%', height: '50%', top: '20%', left: '25%' },
+                "front-back": { width: '40%', height: '40%', top: '30%', left: '30%' },
+                sleeve: { width: '20%', height: '30%', top: '15%', left: '5%', transform: 'rotate(-15deg)' }
+            };
+            
+            const style = formatStyles[format];
+            Object.assign(designPlacement.style, style);
+            
+            designPlacement.innerHTML = `<img src="${designUrl}" alt="T-shirt Design" style="width: 100%; height: 100%; object-fit: contain;">`;
+        }
+
+        // Display design variations
+        function displayVariations(variations) {
+            const grid = document.getElementById('variation-grid');
+            grid.innerHTML = '';
+            
+            variations.forEach((variation, index) => {
+                const variationDiv = document.createElement('div');
+                variationDiv.className = 'variation-item';
+                variationDiv.innerHTML = `
+                    <img src="${variation}" alt="Variation ${index + 1}" onclick="selectVariation('${variation}')">
+                    <p>Variation ${index + 1}</p>
+                `;
+                grid.appendChild(variationDiv);
+            });
+        }
+
+        // Select a variation as main design
+        function selectVariation(variationUrl) {
+            const format = document.getElementById('design-format').value;
+            setupTShirtPreview(variationUrl, format);
+            currentDesign.mainDesign = variationUrl;
+        }
+
         // Update progress bar
         function updateProgress(percentage, status) {
             document.getElementById('progress-text').textContent = `${percentage}%`;
@@ -338,77 +411,270 @@
             document.getElementById('status-text').textContent = status;
         }
 
-        // Download comic strip
-        function downloadComicStrip() {
-            const panels = document.querySelectorAll('.comic-panel img');
-            panels.forEach((img, index) => {
-                const link = document.createElement('a');
-                link.href = img.src;
-                link.download = `comic-panel-${index + 1}.png`;
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-            });
-            alert('Comic strip panels downloaded!');
-        }
-
-        // Regenerate a random panel
-        async function regeneratePanel() {
-            if (!currentComic) {
-                alert('No comic to regenerate');
+        // Download design
+        function downloadDesign() {
+            if (!currentDesign) {
+                alert('No design to download');
                 return;
             }
 
-            const randomIndex = Math.floor(Math.random() * currentComic.panelDescriptions.length);
-            const panel = document.getElementById(`panel-${randomIndex}`);
-            const content = panel.querySelector('.panel-content');
+            const link = document.createElement('a');
+            link.href = currentDesign.mainDesign;
+            link.download = `tshirt-design-${Date.now()}.png`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
             
-            content.innerHTML = '<div class="loading">Regenerating...</div>';
+            alert('T-shirt design downloaded! 💾');
+        }
+
+        // Regenerate design with same parameters
+        async function regenerateDesign() {
+            if (!currentDesign) {
+                alert('No design to regenerate');
+                return;
+            }
+
+            const prompt = document.getElementById('design-prompt').value;
+            const style = document.getElementById('graphic-style').value;
+            const format = document.getElementById('design-format').value;
+            const colorScheme = document.getElementById('color-scheme').value;
+
+            document.getElementById('generate-btn').disabled = true;
             
             try {
-                await generatePanelImage(randomIndex, currentComic.panelDescriptions[randomIndex], currentComic.style);
-                alert(`Panel ${randomIndex + 1} regenerated!`);
+                const fullPrompt = createDesignPrompt(prompt, style, format, colorScheme);
+                const newDesign = await generateDesignImage(fullPrompt);
+                setupTShirtPreview(newDesign, format);
+                currentDesign.mainDesign = newDesign;
+                alert('Design regenerated! 🔄');
             } catch (error) {
-                alert('Failed to regenerate panel');
+                alert('Failed to regenerate design: ' + error.message);
+            } finally {
+                document.getElementById('generate-btn').disabled = false;
             }
         }
 
-        // Save comic strip to database
-        async function saveComicStrip() {
-            if (!currentComic || !supabase) {
-                alert('No comic to save or database not initialized');
+        // Adjust design (regenerate with modified style)
+        async function adjustDesign() {
+            if (!currentDesign) {
+                alert('No design to adjust');
+                return;
+            }
+
+            const newStyle = prompt('Choose new style:\nvintage, minimalist, streetwear, artistic, pop-art, grunge, neon, hand-drawn', currentDesign.style);
+            if (newStyle && newStyle !== currentDesign.style) {
+                document.getElementById('graphic-style').value = newStyle;
+                await regenerateDesign();
+            }
+        }
+
+        // Save design to database
+        async function saveDesign() {
+            if (!currentDesign || !supabase) {
+                alert('No design to save or database not initialized');
                 return;
             }
 
             try {
                 const { data, error } = await supabase
-                    .from('comic_strips')
-                    .insert([currentComic]);
+                    .from('tshirt_designs')
+                    .insert([currentDesign]);
 
                 if (error) {
                     throw error;
                 }
 
-                alert('Comic strip saved to database!');
+                alert('T-shirt design saved to collection! 💼');
             } catch (error) {
-                alert('Failed to save comic strip: ' + error.message);
+                alert('Failed to save design: ' + error.message);
             }
         }
+
+        // Update T-shirt color preview
+        document.getElementById('tshirt-color').addEventListener('change', function() {
+            if (currentDesign) {
+                const format = document.getElementById('design-format').value;
+                setupTShirtPreview(currentDesign.mainDesign, format);
+            }
+        });
     </script>
 
     <style>
-        /* Minimal styling for functionality */
-        body { font-family: Arial, sans-serif; margin: 20px; }
-        div { margin: 10px 0; }
-        label { display: inline-block; width: 150px; }
-        input, textarea, select { margin: 5px; padding: 5px; }
-        button { padding: 10px 20px; margin: 5px; cursor: pointer; }
-        .comic-panel { border: 2px solid #333; margin: 20px 0; padding: 15px; }
-        .panel-content { min-height: 200px; text-align: center; background: #f5f5f5; }
-        .loading { padding: 50px; color: #666; }
-        .error { padding: 50px; color: red; }
-        #progress-bar { border: 1px solid #ccc; }
-        h1, h2, h3, h4 { color: #333; }
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            margin: 0; 
+            padding: 20px; 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        #app {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+        
+        h1 { 
+            color: #333; 
+            text-align: center; 
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            background: linear-gradient(45deg, #FF6B6B, #4ECDC4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        h2, h3, h4 { color: #555; }
+        
+        div { margin: 15px 0; }
+        
+        label { 
+            display: inline-block; 
+            width: 200px; 
+            font-weight: 600;
+            color: #666;
+        }
+        
+        input, textarea, select { 
+            margin: 5px; 
+            padding: 10px; 
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s ease;
+        }
+        
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: #4ECDC4;
+        }
+        
+        button { 
+            padding: 12px 24px; 
+            margin: 8px; 
+            cursor: pointer; 
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            background: linear-gradient(45deg, #FF6B6B, #4ECDC4);
+            color: white;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+        }
+        
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .upload-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        
+        .image-preview {
+            margin-top: 15px;
+            text-align: center;
+        }
+        
+        .design-container {
+            display: flex;
+            justify-content: center;
+            margin: 30px 0;
+        }
+        
+        .tshirt-preview {
+            width: 300px;
+            height: 400px;
+            background: #ffffff;
+            border-radius: 20px 20px 40px 40px;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin: 20px;
+        }
+        
+        .design-area {
+            position: absolute;
+            background: rgba(255,255,255,0.1);
+            border-radius: 8px;
+        }
+        
+        .action-buttons {
+            text-align: center;
+            margin: 30px 0;
+        }
+        
+        .variations-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 30px;
+        }
+        
+        .variation-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .variation-item {
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+        
+        .variation-item:hover {
+            transform: scale(1.05);
+        }
+        
+        .variation-item img {
+            width: 100%;
+            height: 120px;
+            object-fit: cover;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .variation-item p {
+            margin: 8px 0 0 0;
+            font-size: 12px;
+            color: #666;
+        }
+        
+        #progress-bar { 
+            border: 1px solid #ddd; 
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        #progress {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            margin: 20px 0;
+        }
+        
+        #status-text {
+            text-align: center;
+            margin-top: 10px;
+            font-weight: 600;
+            color: #666;
+        }
     </style>
 </body>
 </html>
